@@ -13,11 +13,11 @@ class ExpressionComputer:
 
     >>> computer = ExpressionComputer()
     >>> computer.solve('10+2 - (3*3)')
-    "3"
+    '3'
     """
 
     def __init__(self):
-        Operator = namedtuple('Operator', 'prec assoc')
+        Operator = namedtuple('Operator', 'prec assoc')  # pylint: disable-msg=C0103
         self.ops = {
             '^': Operator(prec=3, assoc='R'),
             '*': Operator(prec=2, assoc='L'),
@@ -27,25 +27,26 @@ class ExpressionComputer:
         }
 
     def solve(self, expression):
-        # Breaks the expression string into a list of tokens, expressed as 5-tuples.
-        tokens = list(tokenize(BytesIO(expression.encode('utf_8')).readline))
 
         print('Before:')
         print(expression)
-        postfix_queue = self.convert_infix(tokens)
+        postfix_queue = self.convert_infix(expression)
         print('After:')
         print(*[x[1] for x in postfix_queue])
 
-    def convert_infix(self, tokens):
+    def convert_infix(self, expression):
         """
         Converts an infix expression to a postfix expression using the Shunting-Yard algorithm.
 
         Args:
-            tokens: a list of tuples containing operators and operands in infix order
+            expression: a string containing an algebraic expression in infix notation
 
         Returns:
             a queue of tuples containing operands and operators in postfix order
         """
+
+        # Breaks the expression string into a list of tokens, expressed as 5-tuples.
+        tokens = list(tokenize(BytesIO(expression.encode('utf_8')).readline))
 
         out_queue = deque()
         op_stack = []
