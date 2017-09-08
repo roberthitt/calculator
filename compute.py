@@ -11,12 +11,12 @@ class ExpressionComputer:
     """
     Class for computing infix expressions
 
-    >>> computer = ExpressionComputer('10+2 - (3*3)')
-    >>> computer.solve()
+    >>> computer = ExpressionComputer()
+    >>> computer.solve('10+2 - (3*3)')
     "3"
     """
 
-    def __init__(self, expression):
+    def __init__(self):
         Operator = namedtuple('Operator', 'prec assoc')
         self.ops = {
             '^': Operator(prec=3, assoc='R'),
@@ -25,30 +25,31 @@ class ExpressionComputer:
             '+': Operator(prec=1, assoc='L'),
             '-': Operator(prec=1, assoc='L')
         }
-        self.expression = expression
 
+    def solve(self, expression):
         # Breaks the expression string into a list of tokens, expressed as 5-tuples.
-        # The tuples are of the form (token type, token string, (srow, scol), (erow, ecol), line).
-        self.tokens = tokenize(BytesIO(expression.encode('utf_8')).readline)
+        tokens = list(tokenize(BytesIO(expression.encode('utf_8')).readline))
 
-    def solve(self):
         print('Before:')
-        print(self.expression)
-        postfix_stack = self.convert_infix()
+        print(expression)
+        postfix_queue = self.convert_infix(tokens)
         print('After:')
-        print(*[x[1] for x in postfix_stack])
+        print(*[x[1] for x in postfix_queue])
 
-    def convert_infix(self):
+    def convert_infix(self, tokens):
         """
         Converts an infix expression to a postfix expression using the Shunting-Yard algorithm.
 
+        Args:
+            tokens: a list of tuples containing operators and operands in infix order
+
         Returns:
-            a queue containing the operands and operators in postfix order
+            a queue of tuples containing operands and operators in postfix order
         """
 
         out_queue = deque()
         op_stack = []
-        for tok_type, tok_string, *_ in list(self.tokens):
+        for tok_type, tok_string, *_ in tokens:
             if tok_type == NUMBER:
                 out_queue.append((tok_type, tok_string))
             elif tok_string == '(':
@@ -76,5 +77,5 @@ class ExpressionComputer:
         return out_queue
 
 
-com = ExpressionComputer('3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3')
-com.solve()
+com = ExpressionComputer()
+com.solve('3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3')
