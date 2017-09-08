@@ -38,6 +38,7 @@ class ExpressionComputer:
 
         # Precedence rules for operators
         precedence = {'^': 5, '*': 4, '/': 3, '+': 2, '-': 1}
+        right_assoc = ['^']
 
         out_stack = []
         op_stack = []
@@ -56,8 +57,9 @@ class ExpressionComputer:
                     out_stack.append(op_stack.pop())
                 op_stack.pop()
             elif tok_type == OP:
-                while (op_stack and op_stack[-1][1] != '(' and
-                       precedence[op_stack[-1][1]] >= precedence[tok_string]):
+                while (op_stack and op_stack[-1][1] != '('
+                       and op_stack[-1][1] not in right_assoc
+                       and precedence[op_stack[-1][1]] >= precedence[tok_string]):
                     out_stack.append(op_stack.pop())
                 op_stack.append((tok_type, tok_string))
 
