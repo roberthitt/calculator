@@ -6,33 +6,53 @@ from collections import namedtuple, deque
 from io import BytesIO
 from tokenize import tokenize, NUMBER, OP
 
+import operator
+
+
+OpInfo = namedtuple('Operator', 'precedence assoc operation')
 
 class ExpressionComputer:
     """
-    Class for computing infix expressions
+    Class for computing infix expressions.
 
     >>> computer = ExpressionComputer()
     >>> computer.solve('10+2 - (3*3)')
-    '3'
+    3
     """
 
+
     def __init__(self):
-        Operator = namedtuple('Operator', 'prec assoc')  # pylint: disable-msg=C0103
         self.ops = {
-            '^': Operator(prec=3, assoc='R'),
-            '*': Operator(prec=2, assoc='L'),
-            '/': Operator(prec=2, assoc='L'),
-            '+': Operator(prec=1, assoc='L'),
-            '-': Operator(prec=1, assoc='L')
+            '^': OpInfo(precedence=3, assoc='R', operation=operator.pow),
+            '*': OpInfo(precedence=2, assoc='L', operation=operator.mul),
+            '/': OpInfo(precedence=2, assoc='L', operation=operator.truediv),
+            '+': OpInfo(precedence=1, assoc='L', operation=operator.add),
+            '-': OpInfo(precedence=1, assoc='L', operation=operator.sub)
         }
 
     def solve(self, expression):
+        """
+        Solves an infix algebraic expression.
 
-        print('Before:')
-        print(expression)
+        Args:
+            expression: a string containing an algebraic expression in infix notation
+
+        Returns:
+            integer or float result of the expression
+        """
+
         postfix_queue = self.convert_infix(expression)
-        print('After:')
-        print(*[x[1] for x in postfix_queue])
+        eval_stack = []
+
+        for tok_type, token in postfix_queue:
+            if tok_type == OP:
+                operand2, operand1 = eval_stack.pop(), eval_stack.pop()
+                result = self.ops[token].operation(operand1, operand2)
+                eval_stack.append(result)
+            else:
+                eval_stack.append(token)
+
+        return eval_stack.pop()
 
     def convert_infix(self, expression):
         """
@@ -52,7 +72,7 @@ class ExpressionComputer:
         op_stack = []
         for tok_type, tok_string, *_ in tokens:
             if tok_type == NUMBER:
-                out_queue.append((tok_type, tok_string))
+                out_queue.append((tok_type, int(tok_string)))
             elif tok_string == '(':
                 op_stack.append((tok_type, tok_string))
             elif tok_string == ')':
@@ -61,12 +81,12 @@ class ExpressionComputer:
                 op_stack.pop()
             elif tok_type == OP:
                 while op_stack:
-                    operator = op_stack[-1][1]
-                    if operator == '(':
+                    top = op_stack[-1][1]
+                    if top == '(':
                         break
 
-                    op_info, tok_info = self.ops[operator], self.ops[tok_string]
-                    if op_info.assoc == 'L' and op_info.prec >= tok_info.prec:
+                    top_info, current_info = self.ops[top], self.ops[tok_string]
+                    if top_info.assoc == 'L' and top_info.precedence >= current_info.precedence:
                         out_queue.append(op_stack.pop())
                     else:
                         break
@@ -76,7 +96,3 @@ class ExpressionComputer:
             out_queue.append(op_stack.pop())
 
         return out_queue
-
-
-com = ExpressionComputer()
-com.solve('3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3')
