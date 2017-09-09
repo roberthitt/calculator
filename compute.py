@@ -2,14 +2,13 @@
 Module for computing infix expressions and equations
 """
 
+import operator
 from collections import namedtuple, deque
 from io import BytesIO
-from tokenize import tokenize, NUMBER, OP
-
-import operator
+from tokenize import tokenize, NUMBER
 
 
-OpInfo = namedtuple('Operator', 'precedence assoc operation')
+OpInfo = namedtuple('Operator', 'precedence assoc operation operand_count')
 
 class ExpressionComputer:
     """
@@ -23,11 +22,12 @@ class ExpressionComputer:
 
     def __init__(self):
         self.ops = {
-            '^': OpInfo(precedence=3, assoc='R', operation=operator.pow),
-            '*': OpInfo(precedence=2, assoc='L', operation=operator.mul),
-            '/': OpInfo(precedence=2, assoc='L', operation=operator.truediv),
-            '+': OpInfo(precedence=1, assoc='L', operation=operator.add),
-            '-': OpInfo(precedence=1, assoc='L', operation=operator.sub)
+            'abs': OpInfo(precedence=4, assoc='L', operation=operator.abs, operand_count=1),
+            '^': OpInfo(precedence=3, assoc='R', operation=operator.pow, operand_count=2),
+            '*': OpInfo(precedence=2, assoc='L', operation=operator.mul, operand_count=2),
+            '/': OpInfo(precedence=2, assoc='L', operation=operator.truediv, operand_count=2),
+            '+': OpInfo(precedence=1, assoc='L', operation=operator.add, operand_count=2),
+            '-': OpInfo(precedence=1, assoc='L', operation=operator.sub, operand_count=2)
         }
 
     def solve(self, expression):
@@ -44,10 +44,16 @@ class ExpressionComputer:
         postfix_queue = self.convert_infix(expression)
         eval_stack = []
 
-        for tok_type, token in postfix_queue:
-            if tok_type == OP:
-                operand2, operand1 = eval_stack.pop(), eval_stack.pop()
-                result = self.ops[token].operation(operand1, operand2)
+        for token in postfix_queue:
+            if token in self.ops:
+                *_, operation, operand_count = self.ops[token]
+
+                # Pops a variable number of items off the stack.
+                operands = eval_stack[-operand_count:]
+                eval_stack = eval_stack[:-operand_count]
+
+                print(f'{token} {operands}')
+                result = operation(*operands)
                 eval_stack.append(result)
             else:
                 eval_stack.append(token)
@@ -72,16 +78,16 @@ class ExpressionComputer:
         op_stack = []
         for tok_type, tok_string, *_ in tokens:
             if tok_type == NUMBER:
-                out_queue.append((tok_type, int(tok_string)))
+                out_queue.append(int(tok_string))
             elif tok_string == '(':
-                op_stack.append((tok_type, tok_string))
+                op_stack.append(tok_string)
             elif tok_string == ')':
-                while op_stack and op_stack[-1][1] != '(':
+                while op_stack and op_stack[-1] != '(':
                     out_queue.append(op_stack.pop())
                 op_stack.pop()
-            elif tok_type == OP:
+            elif tok_string in self.ops:
                 while op_stack:
-                    top = op_stack[-1][1]
+                    top = op_stack[-1]
                     if top == '(':
                         break
 
@@ -90,9 +96,12 @@ class ExpressionComputer:
                         out_queue.append(op_stack.pop())
                     else:
                         break
-                op_stack.append((tok_type, tok_string))
+                op_stack.append(tok_string)
 
         while op_stack:
             out_queue.append(op_stack.pop())
 
         return out_queue
+
+com = ExpressionComputer()
+print(com.solve('abs(1-4*9)'))
