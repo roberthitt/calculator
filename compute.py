@@ -5,7 +5,11 @@ Module for computing infix expressions and equations
 import operator
 from collections import namedtuple, deque
 from io import BytesIO
-from tokenize import tokenize, NUMBER
+from tokenize import tokenize, NUMBER, ENCODING
+
+from mpl_toolkits.axes_grid.axislines import SubplotZero
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 OpInfo = namedtuple('Operator', 'precedence assoc operation operand_count')
@@ -21,7 +25,9 @@ class ExpressionComputer:
 
 
     def __init__(self):
-        self.ops = {
+        ## TODO: consider moving this to a seperate config file
+        self.OPS = {
+            'neg': OpInfo(precedence=5, assoc='R', operation=operator.neg, operand_count=1),
             'abs': OpInfo(precedence=4, assoc='L', operation=operator.abs, operand_count=1),
             '^': OpInfo(precedence=3, assoc='R', operation=operator.pow, operand_count=2),
             '*': OpInfo(precedence=2, assoc='L', operation=operator.mul, operand_count=2),
@@ -30,23 +36,45 @@ class ExpressionComputer:
             '-': OpInfo(precedence=1, assoc='L', operation=operator.sub, operand_count=2)
         }
 
-    def solve(self, expression):
+    def graph(self, equation, dimensions=(30, 30)):
+        """
+        Graphs an equation of the form 'y = x + 5'
+
+        Args:
+            equation: a string containing the right side of an equation (the left side is implied)
+            dimensions: a tuple of the form (x, y)
+        """
+
+        # Note: if performance is an issue, consider rewriting to use np operators
+        #       to operate on the entire np array rather than individual elements
+
+        x, y = dimensions
+        increments = np.linspace(-x/2, x/2, 50)
+        print(increments)
+        points = [self.solve(equation, replacement=value) for value in increments]
+        return points
+
+    def solve(self, expression, replacement=None):
         """
         Solves an infix algebraic expression.
 
         Args:
             expression: a string containing an algebraic expression in infix notation
+            replacement: optional value to replace the variable 'x' if it occurs in expression
 
         Returns:
             integer or float result of the expression
         """
 
+        if replacement is not None:
+            expression = expression.replace('x', str(replacement))
+
         postfix_queue = self.convert_infix(expression)
         eval_stack = []
 
         for token in postfix_queue:
-            if token in self.ops:
-                *_, operation, operand_count = self.ops[token]
+            if token in self.OPS:
+                *_, operation, operand_count = self.OPS[token]
 
                 # Pops a variable number of items off the stack.
                 operands = eval_stack[-operand_count:]
@@ -76,27 +104,39 @@ class ExpressionComputer:
 
         out_queue = deque()
         op_stack = []
+        prev_token = None
+
+        # TODO: make this work for stuff like '5x' or '5(5)'
         for tok_type, tok_string, *_ in tokens:
             if tok_type == NUMBER:
-                out_queue.append(int(tok_string))
+                out_queue.append(float(tok_string))
             elif tok_string == '(':
                 op_stack.append(tok_string)
             elif tok_string == ')':
                 while op_stack and op_stack[-1] != '(':
                     out_queue.append(op_stack.pop())
                 op_stack.pop()
-            elif tok_string in self.ops:
+            elif tok_string in self.OPS:
+                # Allow unary minus operator
+                if tok_string == '-' and (prev_token in self.OPS or prev_token == '('
+                    or prev_token == None) and prev_token != ')':
+
+                    tok_string = 'neg'
+
                 while op_stack:
                     top = op_stack[-1]
                     if top == '(':
                         break
 
-                    top_info, current_info = self.ops[top], self.ops[tok_string]
+                    top_info, current_info = self.OPS[top], self.OPS[tok_string]
                     if top_info.assoc == 'L' and top_info.precedence >= current_info.precedence:
                         out_queue.append(op_stack.pop())
                     else:
                         break
                 op_stack.append(tok_string)
+
+            if tok_type != ENCODING:
+                prev_token = tok_string
 
         while op_stack:
             out_queue.append(op_stack.pop())
@@ -104,4 +144,5 @@ class ExpressionComputer:
         return out_queue
 
 com = ExpressionComputer()
-print(com.solve('abs(1-4*9)'))
+#print(com.solve('1 + -1 * 5'))
+print(com.graph('abs(x + 5)'))
