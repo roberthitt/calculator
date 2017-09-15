@@ -37,7 +37,7 @@ class Calculator:
 
     def graph(self, equation, dimensions=(30, 30)):
         """
-        Graphs an equation of the form 'y = x + 5'
+        Graphs a function of the form 'y = x + 5'.
 
         Args:
             equation: a string containing the right side of an equation (the left side is implied)
@@ -48,10 +48,36 @@ class Calculator:
         #       to operate on the entire np array rather than individual elements
 
         x, y = dimensions
+
         increments = np.linspace(-x/2, x/2, 50)
-        print(increments)
         points = [self.solve(equation, replacement=value) for value in increments]
-        return points
+
+        self.create_plot(increments, points)
+
+    def create_plot(self, scale, points):
+        """
+        Using matplotlib, graphs the given points on a Cartesian plane.
+        Adapted from the matplotlib documentation: https://matplotlib.org/examples/axes_grid/demo_axisline_style.html.
+
+        args:
+            scale: Numpy array of increments for the x-axis.
+            points: list of points' Y-values to be plotted.
+        """
+
+        fig = plt.figure(1)
+        ax = SubplotZero(fig, 111)
+        fig.add_subplot(ax)
+
+        for direction in ['xzero', 'yzero']:
+            ax.axis[direction].set_axisline_style('-|>')
+            ax.axis[direction].set_visible(True)
+
+        for direction in ['left', 'right', 'bottom', 'top']:
+            ax.axis[direction].set_visible(False)
+
+        ax.plot(scale, points)
+
+        plt.show()
 
     def solve(self, expression, replacement=None):
         """
@@ -66,7 +92,7 @@ class Calculator:
         """
 
         if replacement is not None:
-            expression = expression.replace('x', str(replacement))
+            expression = expression.replace('x', f'({replacement})')
 
         postfix_queue = self.convert_infix(expression)
         eval_stack = []
@@ -79,7 +105,7 @@ class Calculator:
                 operands = eval_stack[-operand_count:]
                 eval_stack = eval_stack[:-operand_count]
 
-                print(f'{token} {operands}')
+                #print(f'{token} {operands}')
                 result = operation(*operands)
                 eval_stack.append(result)
             else:
@@ -150,6 +176,5 @@ class Calculator:
 
         return out_queue
 
-com = Calculator()
-print(com.solve('(5)(2) + 5(2 + 2)'))
-#print(com.graph('2x'))
+#com = Calculator()
+#com.graph('2^x')
