@@ -3,6 +3,7 @@ Module for computing infix expressions and equations
 """
 
 import operator
+import math
 from collections import namedtuple, deque
 from io import BytesIO
 from tokenize import tokenize, NUMBER, ENCODING
@@ -28,6 +29,13 @@ class Calculator:
         self.OPS = {
             'neg': self.OpInfo(precedence=5, assoc='R', operation=operator.neg, operand_count=1),
             'abs': self.OpInfo(precedence=4, assoc='L', operation=operator.abs, operand_count=1),
+            'sin': self.OpInfo(precedence=4, assoc='L', operation=math.sin, operand_count=1),
+            'cos': self.OpInfo(precedence=4, assoc='L', operation=math.cos, operand_count=1),
+            'tan': self.OpInfo(precedence=4, assoc='L', operation=math.tan, operand_count=1),
+            'sqrt': self.OpInfo(precedence=4, assoc='L', operation=math.sqrt, operand_count=1),
+            'log': self.OpInfo(precedence=4, assoc='L', operation=math.log10, operand_count=1),
+            'ln': self.OpInfo(precedence=4, assoc='L', operation=math.log, operand_count=1),
+            '!': self.OpInfo(precedence=4, assoc='R', operation=math.factorial, operand_count=1),
             '^': self.OpInfo(precedence=3, assoc='R', operation=operator.pow, operand_count=2),
             '*': self.OpInfo(precedence=2, assoc='L', operation=operator.mul, operand_count=2),
             '/': self.OpInfo(precedence=2, assoc='L', operation=operator.truediv, operand_count=2),
@@ -50,7 +58,10 @@ class Calculator:
         x, y = dimensions
 
         increments = np.linspace(-x, x, 50)
-        points = [self.solve(equation, replacement=value) for value in increments]
+        points = np.fromiter((self.solve(equation, replacement=value) for value in increments), np.float)
+
+        points[y is None] = np.nan
+        #print(points)
 
         self.create_plot(increments, points, y)
 
@@ -63,7 +74,7 @@ class Calculator:
 
         args:
             scale: Numpy array of increments for the x-axis.
-            points: list of points' Y-values to be plotted.
+            points: Numpy array of points' Y-values to be plotted.
             y_bounds: integer determining scale of y axis. range will go from -y_bounds to y_bounds.
         """
 
@@ -104,21 +115,25 @@ class Calculator:
         postfix_queue = self.convert_infix(expression)
         eval_stack = []
 
-        for token in postfix_queue:
-            if token in self.OPS:
-                *_, operation, operand_count = self.OPS[token]
+        try:
+            for token in postfix_queue:
+                if token in self.OPS:
+                    *_, operation, operand_count = self.OPS[token]
 
-                # Pops a variable number of items off the stack.
-                operands = eval_stack[-operand_count:]
-                eval_stack = eval_stack[:-operand_count]
+                    # Pops a variable number of items off the stack.
+                    operands = eval_stack[-operand_count:]
+                    eval_stack = eval_stack[:-operand_count]
 
-                #print(f'{token} {operands}')
-                result = operation(*operands)
-                eval_stack.append(result)
-            else:
-                eval_stack.append(token)
+                    #print(f'{token} {operands}')
+                    result = operation(*operands)
+                    eval_stack.append(result)
+                else:
+                    eval_stack.append(token)
 
-        return eval_stack.pop()
+            return eval_stack.pop()
+        except ValueError:
+            return None
+
 
     def convert_infix(self, expression):
         """
@@ -187,4 +202,10 @@ class Calculator:
         return out_queue
 
 com = Calculator()
-com.graph('abs(4x)')
+com.graph('1/x')
+com.graph('tan(x)')
+"""
+com.graph('sqrt(x)')
+com.graph('log(x)')
+com.graph('ln(x)')
+"""
