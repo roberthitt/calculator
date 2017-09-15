@@ -57,11 +57,12 @@ class Calculator:
 
         x, y = dimensions
 
-        increments = np.linspace(-x, x, 50)
+        increments = np.linspace(-x, x, 1000)
         points = np.fromiter((self.solve(equation, replacement=value) for value in increments), np.float)
 
-        points[y is None] = np.nan
-        #print(points)
+        # Necessary for functions with discontinuous lines.
+        points[points > y] = np.nan
+        points[points < -y] = np.nan
 
         self.create_plot(increments, points, y)
 
@@ -202,10 +203,6 @@ class Calculator:
         return out_queue
 
 com = Calculator()
-com.graph('1/x')
-com.graph('tan(x)')
-"""
-com.graph('sqrt(x)')
-com.graph('log(x)')
-com.graph('ln(x)')
-"""
+com.graph('sqrt(x) + 5')
+com.graph('log(x) + 5')
+com.graph('ln(x) + 5')
