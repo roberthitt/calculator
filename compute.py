@@ -12,28 +12,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-OpInfo = namedtuple('Operator', 'precedence assoc operation operand_count')
-
-class ExpressionComputer:
+class Calculator:
     """
     Class for computing infix expressions.
 
-    >>> computer = ExpressionComputer()
+    >>> computer = Calculator()
     >>> computer.solve('10+2 - (3*3)')
     3
     """
 
+    OpInfo = namedtuple('Operator', 'precedence assoc operation operand_count')
 
     def __init__(self):
         ## TODO: consider moving this to a seperate config file
         self.OPS = {
-            'neg': OpInfo(precedence=5, assoc='R', operation=operator.neg, operand_count=1),
-            'abs': OpInfo(precedence=4, assoc='L', operation=operator.abs, operand_count=1),
-            '^': OpInfo(precedence=3, assoc='R', operation=operator.pow, operand_count=2),
-            '*': OpInfo(precedence=2, assoc='L', operation=operator.mul, operand_count=2),
-            '/': OpInfo(precedence=2, assoc='L', operation=operator.truediv, operand_count=2),
-            '+': OpInfo(precedence=1, assoc='L', operation=operator.add, operand_count=2),
-            '-': OpInfo(precedence=1, assoc='L', operation=operator.sub, operand_count=2)
+            'neg': self.OpInfo(precedence=5, assoc='R', operation=operator.neg, operand_count=1),
+            'abs': self.OpInfo(precedence=4, assoc='L', operation=operator.abs, operand_count=1),
+            '^': self.OpInfo(precedence=3, assoc='R', operation=operator.pow, operand_count=2),
+            '*': self.OpInfo(precedence=2, assoc='L', operation=operator.mul, operand_count=2),
+            '/': self.OpInfo(precedence=2, assoc='L', operation=operator.truediv, operand_count=2),
+            '+': self.OpInfo(precedence=1, assoc='L', operation=operator.add, operand_count=2),
+            '-': self.OpInfo(precedence=1, assoc='L', operation=operator.sub, operand_count=2)
         }
 
     def graph(self, equation, dimensions=(30, 30)):
@@ -104,22 +103,30 @@ class ExpressionComputer:
 
         out_queue = deque()
         op_stack = []
-        prev_token = None
+        prev_token = (None, None)
 
-        # TODO: make this work for stuff like '5x' or '5(5)'
         for tok_type, tok_string, *_ in tokens:
+            prev_tok_type, prev_tok_string = prev_token
+
             if tok_type == NUMBER:
                 out_queue.append(float(tok_string))
+
             elif tok_string == '(':
+                # Allow implicit multiplication (eg 5(x) or (x)(y))
+                if prev_tok_type == NUMBER or prev_tok_string == ')':
+                    op_stack.append('*')
+
                 op_stack.append(tok_string)
+
             elif tok_string == ')':
                 while op_stack and op_stack[-1] != '(':
                     out_queue.append(op_stack.pop())
                 op_stack.pop()
+
             elif tok_string in self.OPS:
                 # Allow unary minus operator
-                if tok_string == '-' and (prev_token in self.OPS or prev_token == '('
-                    or prev_token == None) and prev_token != ')':
+                if tok_string == '-' and (prev_tok_string in self.OPS or prev_tok_string == '('
+                    or prev_tok_string == None) and prev_tok_string != ')':
 
                     tok_string = 'neg'
 
@@ -136,13 +143,13 @@ class ExpressionComputer:
                 op_stack.append(tok_string)
 
             if tok_type != ENCODING:
-                prev_token = tok_string
+                prev_token = (tok_type, tok_string)
 
         while op_stack:
             out_queue.append(op_stack.pop())
 
         return out_queue
 
-com = ExpressionComputer()
-#print(com.solve('1 + -1 * 5'))
-print(com.graph('abs(x + 5)'))
+com = Calculator()
+print(com.solve('(5)(2) + 5(2 + 2)'))
+#print(com.graph('2x'))
