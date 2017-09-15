@@ -57,7 +57,9 @@ class Calculator:
     def create_plot(self, scale, points):
         """
         Using matplotlib, graphs the given points on a Cartesian plane.
-        Adapted from the matplotlib documentation: https://matplotlib.org/examples/axes_grid/demo_axisline_style.html.
+
+        Adapted from the matplotlib documentation:
+        https://matplotlib.org/examples/axes_grid/demo_axisline_style.html.
 
         args:
             scale: Numpy array of increments for the x-axis.
@@ -82,6 +84,9 @@ class Calculator:
     def solve(self, expression, replacement=None):
         """
         Solves an infix algebraic expression.
+
+        Adapted from the pseudocode shown here:
+        https://en.wikipedia.org/wiki/Reverse_Polish_notation#Postfix_evaluation_algorithm.
 
         Args:
             expression: a string containing an algebraic expression in infix notation
@@ -116,6 +121,9 @@ class Calculator:
     def convert_infix(self, expression):
         """
         Converts an infix expression to a postfix expression using the Shunting-Yard algorithm.
+
+        Adapted from the pseudocode shown here:
+        https://en.wikipedia.org/wiki/Shunting-yard_algorithm.
 
         Args:
             expression: a string containing an algebraic expression in infix notation
