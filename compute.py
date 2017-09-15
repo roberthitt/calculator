@@ -35,13 +35,13 @@ class Calculator:
             '-': self.OpInfo(precedence=1, assoc='L', operation=operator.sub, operand_count=2)
         }
 
-    def graph(self, equation, dimensions=(30, 30)):
+    def graph(self, equation, dimensions=(10, 10)):
         """
         Graphs a function of the form 'y = x + 5'.
 
         Args:
             equation: a string containing the right side of an equation (the left side is implied)
-            dimensions: a tuple of the form (x, y)
+            dimensions: a tuple of the form (x, y). domain will go from -x to x, and range from -y to y
         """
 
         # Note: if performance is an issue, consider rewriting to use np operators
@@ -49,12 +49,12 @@ class Calculator:
 
         x, y = dimensions
 
-        increments = np.linspace(-x/2, x/2, 50)
+        increments = np.linspace(-x, x, 50)
         points = [self.solve(equation, replacement=value) for value in increments]
 
-        self.create_plot(increments, points)
+        self.create_plot(increments, points, y)
 
-    def create_plot(self, scale, points):
+    def create_plot(self, scale, points, y_bounds):
         """
         Using matplotlib, graphs the given points on a Cartesian plane.
 
@@ -64,6 +64,7 @@ class Calculator:
         args:
             scale: Numpy array of increments for the x-axis.
             points: list of points' Y-values to be plotted.
+            y_bounds: integer determining scale of y axis. range will go from -y_bounds to y_bounds.
         """
 
         fig = plt.figure(1)
@@ -77,6 +78,7 @@ class Calculator:
         for direction in ['left', 'right', 'bottom', 'top']:
             ax.axis[direction].set_visible(False)
 
+        ax.set_ylim([-y_bounds, y_bounds])
         ax.plot(scale, points)
 
         plt.show()
@@ -184,5 +186,5 @@ class Calculator:
 
         return out_queue
 
-#com = Calculator()
-#com.graph('2^x')
+com = Calculator()
+com.graph('abs(4x)')
