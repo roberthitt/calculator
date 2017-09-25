@@ -50,12 +50,9 @@ class Calculator:
             dimensions: a tuple of form (x, y). domain will go from -x to x, and range from -y to y.
         """
 
-        # Note: if performance is an issue, consider rewriting to use np operators
-        #       to operate on the entire np array rather than individual elements
-
         x_bounds, y_bounds = dimensions
 
-        increments = np.linspace(-x_bounds, x_bounds, 1000)
+        increments = np.linspace(-x_bounds, x_bounds, 10000)
         points = self.solve(equation, replacement=increments)
 
         # Filters out too large/small values. Necessary for functions with discontinuous lines (e.g., tan).
@@ -113,13 +110,13 @@ class Calculator:
             # Necessary for supporting expressions like 5x.
             expression = expression.replace('x', '(x)')
 
-        postfix_queue = self.convert_infix(expression, replacement)
+        postfix_queue = self.convert_infix(expression)
         eval_stack = []
 
         try:
             for token in postfix_queue:
-                if isinstance(token, np.ndarray):
-                    eval_stack.append(token)
+                if token == 'x':
+                    eval_stack.append(replacement)
                 elif token in self.ops:
                     *_, operation, operand_count = self.ops[token]
 
@@ -127,7 +124,6 @@ class Calculator:
                     operands = eval_stack[-operand_count:]
                     eval_stack = eval_stack[:-operand_count]
 
-                    #print(f'{token} {operands}')
                     result = operation(*operands)
                     eval_stack.append(result)
                 else:
@@ -138,7 +134,7 @@ class Calculator:
             return None
 
 
-    def convert_infix(self, expression, replacement=None):
+    def convert_infix(self, expression):
         """
         Converts an infix expression to a postfix expression using the Shunting-Yard algorithm.
 
@@ -147,7 +143,6 @@ class Calculator:
 
         Args:
             expression: a string containing an algebraic expression in infix notation
-            replacement: optional Numpy array to replace the variable 'x' if it occurs in expression
 
         Returns:
             a queue of tuples containing operands and operators in postfix order
@@ -155,12 +150,6 @@ class Calculator:
 
         # Breaks the expression string into a list of tokens, expressed as 5-tuples.
         tokens = list(tokenize(BytesIO(expression.encode('utf_8')).readline))
-
-        # Replaces X value with Numpy array.
-        if replacement is not None:
-            tokens = [(NP_ARRAY, replacement, token[2], token[2], token[3])
-                      if token[1] == 'x' else token
-                      for token in tokens]
 
         out_queue = deque()
         op_stack = []
@@ -171,11 +160,11 @@ class Calculator:
 
             if tok_type == NUMBER:
                 out_queue.append(float(tok_string))
-            elif tok_type == NP_ARRAY:
+            elif tok_string == 'x':
                 out_queue.append(tok_string)
             elif tok_string == '(':
                 # Allow implicit multiplication (e.g., c(x) or (x)(y)).
-                if prev_tok_type == NUMBER or prev_tok_type == NP_ARRAY or prev_tok_string == ')':
+                if prev_tok_type == NUMBER or prev_tok_string == 'x' or prev_tok_string == ')':
                     op_stack.append('*')
 
                 op_stack.append(tok_string)
@@ -188,7 +177,7 @@ class Calculator:
             elif tok_string in self.ops:
                 # Allow unary minus operator.
                 if (tok_string == '-' and prev_tok_string != ')' and
-                        (prev_tok_type == NP_ARRAY or prev_tok_string in self.ops
+                        (prev_tok_string == 'x' or prev_tok_string in self.ops
                          or prev_tok_string == '(' or prev_tok_string is None)):
 
                     tok_string = 'neg'
@@ -214,3 +203,6 @@ class Calculator:
 
 com = Calculator()
 com.graph('tan(x)')
+com.graph('5x+1')
+com.graph('-x')
+com.graph('x^2')
