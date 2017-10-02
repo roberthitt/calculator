@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-NP_ARRAY = 999
 class Calculator:
     """
     Class for computing infix expressions.
