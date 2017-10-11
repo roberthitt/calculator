@@ -40,7 +40,7 @@ class Calculator:
             '-': self.OpInfo(precedence=1, assoc='L', operation=np.subtract, operand_count=2)
         }
 
-    def graph(self, equation, file_name, dimensions=(10, 10)):
+    def graph(self, equation, file_name=None, dimensions=(10, 10)):
         """
         Graphs a function of the form 'y = x + 5'.
 
@@ -61,7 +61,7 @@ class Calculator:
 
         self.create_plot(increments, points, y_bounds, file_name)
 
-    def create_plot(self, scale, points, y_bounds, file_name):
+    def create_plot(self, scale, points, y_bounds, file_name=None):
         """
         Using matplotlib, graphs the given points on a Cartesian plane.
 
@@ -89,7 +89,10 @@ class Calculator:
         subplot.set_ylim([-y_bounds, y_bounds])
         subplot.plot(scale, points)
 
-        plt.savefig(file_name)
+        if file_name:
+            plt.savefig(file_name)
+        else:
+            plt.show()
 
     def solve(self, expression, replacement=None):
         """
