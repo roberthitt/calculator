@@ -4,12 +4,13 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "*"
-
-[requires]
-python_version = "3.6"
+httpie = "*"
 
 [packages]
 numpy = "*"
 matplotlib = "*"
 plotly = "*"
 Flask = "*"
+
+[requires]
+python_version = "3.6"
