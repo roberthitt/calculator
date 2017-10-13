@@ -23,7 +23,7 @@ class Calculator:
     OpInfo = namedtuple('Operator', 'precedence assoc operation operand_count')
 
     def __init__(self):
-        ## TODO: consider moving this to a seperate config file
+        # TODO: move this to a seperate config file
         self.ops = {
             'neg': self.OpInfo(precedence=5, assoc='R', operation=np.negative, operand_count=1),
             'abs': self.OpInfo(precedence=4, assoc='L', operation=np.absolute, operand_count=1),
@@ -42,12 +42,13 @@ class Calculator:
 
     def graph(self, equation, file_name=None, dimensions=(10, 10)):
         """
-        Graphs a function of the form 'y = x + 5'.
+        Graphs a function of the form 'x + 5'.
 
         Args:
-            equation: a string containing the right side of an equation (the left side is implied).
+            equation: a string containing the right side of an equation
             file_name: name for plot to be serialized under.
-            dimensions: a tuple of form (x, y). domain will go from -x to x, and range from -y to y.
+            dimensions: a tuple of form (x, y).
+                        domain will go from -x to x, and range from -y to y.
         """
 
         x_bounds, y_bounds = dimensions
@@ -55,7 +56,8 @@ class Calculator:
         increments = np.linspace(-x_bounds, x_bounds, 10000)
         points = self.solve(equation, replacement=increments)
 
-        # Filters out too large/small values. Necessary for functions with discontinuous lines (e.g., tan).
+        # Filters out too large/small values.
+        # Necessary for functions with discontinuous lines (e.g., tan).
         points[points > y_bounds] = np.nan
         points[points < -y_bounds] = np.nan
 
@@ -71,7 +73,7 @@ class Calculator:
         args:
             scale: Numpy array of increments for the x-axis.
             points: Numpy array of points' Y-values to be plotted.
-            y_bounds: integer determining scale of y axis. range will go from -y_bounds to y_bounds.
+            y_bounds: integer determining scale of y axis
             file_name: name for plot to be serialized under.
         """
 
@@ -102,8 +104,8 @@ class Calculator:
         https://en.wikipedia.org/wiki/Reverse_Polish_notation#Postfix_evaluation_algorithm.
 
         Args:
-            expression: a string containing an algebraic expression in infix notation
-            replacement: optional Numpy array to replace the variable 'x' if it occurs in expression
+            expression: string containing an expression in infix notation
+            replacement: optional Numpy array to replace the variable 'x'
 
         Returns:
             float result of the expression
@@ -136,22 +138,22 @@ class Calculator:
         except ValueError:
             return None
 
-
     def convert_infix(self, expression):
         """
-        Converts an infix expression to a postfix expression using the Shunting-Yard algorithm.
+        Converts an infix expression to a postfix expression
+        Uses a modified version of the Shunting-Yard algorithm.
 
         Adapted from the pseudocode shown here:
         https://en.wikipedia.org/wiki/Shunting-yard_algorithm.
 
         Args:
-            expression: a string containing an algebraic expression in infix notation
+            expression: a string containing an expression in infix notation
 
         Returns:
-            a queue of tuples containing operands and operators in postfix order
+            queue of tuples containing operands and operators in postfix order
         """
 
-        # Breaks the expression string into a list of tokens, expressed as 5-tuples.
+        # Breaks the expression string into a list of tokens
         tokens = list(tokenize(BytesIO(expression.encode('utf_8')).readline))
 
         out_queue = deque()
@@ -167,7 +169,8 @@ class Calculator:
                 out_queue.append(tok_string)
             elif tok_string == '(':
                 # Allow implicit multiplication (e.g., c(x) or (x)(y)).
-                if prev_tok_type == NUMBER or prev_tok_string == 'x' or prev_tok_string == ')':
+                if (prev_tok_type == NUMBER or
+                        prev_tok_string == 'x' or prev_tok_string == ')'):
                     op_stack.append('*')
 
                 op_stack.append(tok_string)
@@ -180,8 +183,10 @@ class Calculator:
             elif tok_string in self.ops:
                 # Allow unary minus operator.
                 if (tok_string == '-' and prev_tok_string != ')' and
-                        (prev_tok_string == 'x' or prev_tok_string in self.ops
-                         or prev_tok_string == '(' or prev_tok_string is None)):
+                        (prev_tok_string == 'x' or
+                         prev_tok_string in self.ops or
+                         prev_tok_string == '(' or
+                         prev_tok_string is None)):
 
                     tok_string = 'neg'
                 while op_stack:
@@ -189,8 +194,10 @@ class Calculator:
                     if top == '(':
                         break
 
-                    top_info, current_info = self.ops[top], self.ops[tok_string]
-                    if top_info.assoc == 'L' and top_info.precedence >= current_info.precedence:
+                    top_info = self.ops[top]
+                    current_info = self.ops[tok_string]
+                    if (top_info.assoc == 'L' and
+                            top_info.precedence >= current_info.precedence):
                         out_queue.append(op_stack.pop())
                     else:
                         break

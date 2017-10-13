@@ -3,13 +3,15 @@ Module for Flask API.
 """
 
 from compute import Calculator
-from flask import Flask, request, send_file     #pylint: disable=E0401
 
-app = Flask(__name__)                           #pylint: disable=C0103
-calculator = Calculator()                       #pylint: disable=C0103
+from flask import Flask, request, send_file
 
-@app.route('/solve')
-def solve():
+app = Flask(__name__)
+calculator = Calculator()
+
+
+@app.route('/graph')
+def graph():
     """
     Returns the graph of the given expression
     """
