@@ -5,11 +5,11 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 
-[requires]
-python_version = "3.6"
-
 [packages]
 numpy = "*"
 matplotlib = "*"
 plotly = "*"
-Flask = "*"
+flask = "*"
+
+[requires]
+python_version = "3.6"

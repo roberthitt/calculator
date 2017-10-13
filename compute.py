@@ -40,12 +40,13 @@ class Calculator:
             '-': self.OpInfo(precedence=1, assoc='L', operation=np.subtract, operand_count=2)
         }
 
-    def graph(self, equation, dimensions=(10, 10)):
+    def graph(self, equation, file_name=None, dimensions=(10, 10)):
         """
         Graphs a function of the form 'y = x + 5'.
 
         Args:
             equation: a string containing the right side of an equation (the left side is implied).
+            file_name: name for plot to be serialized under.
             dimensions: a tuple of form (x, y). domain will go from -x to x, and range from -y to y.
         """
 
@@ -58,9 +59,9 @@ class Calculator:
         points[points > y_bounds] = np.nan
         points[points < -y_bounds] = np.nan
 
-        self.create_plot(increments, points, y_bounds)
+        self.create_plot(increments, points, y_bounds, file_name)
 
-    def create_plot(self, scale, points, y_bounds):
+    def create_plot(self, scale, points, y_bounds, file_name=None):
         """
         Using matplotlib, graphs the given points on a Cartesian plane.
 
@@ -71,6 +72,7 @@ class Calculator:
             scale: Numpy array of increments for the x-axis.
             points: Numpy array of points' Y-values to be plotted.
             y_bounds: integer determining scale of y axis. range will go from -y_bounds to y_bounds.
+            file_name: name for plot to be serialized under.
         """
 
         fig = plt.figure(1)
@@ -87,8 +89,10 @@ class Calculator:
         subplot.set_ylim([-y_bounds, y_bounds])
         subplot.plot(scale, points)
 
-        # TODO: return some sort of serializable version of graph
-        plt.show()
+        if file_name:
+            plt.savefig(file_name)
+        else:
+            plt.show()
 
     def solve(self, expression, replacement=None):
         """
@@ -199,9 +203,3 @@ class Calculator:
             out_queue.append(op_stack.pop())
 
         return out_queue
-
-com = Calculator()
-com.graph('tan(x)')
-com.graph('5x+1')
-com.graph('-x')
-com.graph('x^2')
