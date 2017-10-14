@@ -7,7 +7,7 @@ from compute import Calculator
 from flask import Flask, request, send_file
 
 app = Flask(__name__)
-calculator = Calculator()
+calculator = Calculator('config.yaml')
 
 
 @app.route('/graph')

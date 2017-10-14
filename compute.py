@@ -10,11 +10,15 @@ from mpl_toolkits.axes_grid.axislines import SubplotZero
 import matplotlib.pyplot as plt
 import numpy as np
 
+from configuration import Configuration
+
 
 class Calculator:
     """
     Class for computing infix expressions.
 
+    Example:
+    --------
     >>> computer = Calculator()
     >>> computer.solve('10+2 - (3*3)')
     3
@@ -22,23 +26,9 @@ class Calculator:
 
     OpInfo = namedtuple('Operator', 'precedence assoc operation operand_count')
 
-    def __init__(self):
-        # TODO: move this to a seperate config file
-        self.ops = {
-            'neg': self.OpInfo(precedence=5, assoc='R', operation=np.negative, operand_count=1),
-            'abs': self.OpInfo(precedence=4, assoc='L', operation=np.absolute, operand_count=1),
-            'sin': self.OpInfo(precedence=4, assoc='L', operation=np.sin, operand_count=1),
-            'cos': self.OpInfo(precedence=4, assoc='L', operation=np.cos, operand_count=1),
-            'tan': self.OpInfo(precedence=4, assoc='L', operation=np.tan, operand_count=1),
-            'sqrt': self.OpInfo(precedence=4, assoc='L', operation=np.sqrt, operand_count=1),
-            'log': self.OpInfo(precedence=4, assoc='L', operation=np.log10, operand_count=1),
-            'ln': self.OpInfo(precedence=4, assoc='L', operation=np.log, operand_count=1),
-            '^': self.OpInfo(precedence=3, assoc='R', operation=np.power, operand_count=2),
-            '*': self.OpInfo(precedence=2, assoc='L', operation=np.multiply, operand_count=2),
-            '/': self.OpInfo(precedence=2, assoc='L', operation=np.true_divide, operand_count=2),
-            '+': self.OpInfo(precedence=1, assoc='L', operation=np.add, operand_count=2),
-            '-': self.OpInfo(precedence=1, assoc='L', operation=np.subtract, operand_count=2)
-        }
+    def __init__(self, config_path):
+        config = Configuration(config_path)
+        self.ops = config.ops
 
     def graph(self, equation, file_name=None, dimensions=(10, 10)):
         """
