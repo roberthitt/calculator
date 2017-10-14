@@ -1,0 +1,66 @@
+operators:
+  - symbol: neg
+    precedence: 5
+    assoc: R
+    operation: negative
+    operand_count: 1
+  - symbol: abs
+    precedence: 4
+    assoc: L
+    operation: absolute
+    operand_count: 1
+  - symbol: sin
+    precedence: 4
+    assoc: L
+    operation: sin
+    operand_count: 1
+  - symbol: cos
+    precedence: 4
+    assoc: L
+    operation: cos
+    operand_count: 1
+  - symbol: tan
+    precedence: 4
+    assoc: L
+    operation: tan
+    operand_count: 1
+  - symbol: sqrt
+    precedence: 4
+    assoc: L
+    operation: sqrt
+    operand_count: 1
+  - symbol: log
+    precedence: 4
+    assoc: L
+    operation: log10
+    operand_count: 1
+  - symbol: ln
+    precedence: 4
+    assoc: L
+    operation: log
+    operand_count: 1
+  - symbol: ^
+    precedence: 3
+    assoc: R
+    operation: power
+    operand_count: 2
+  - symbol: "*"
+    precedence: 2
+    assoc: L
+    operation: multiply
+    operand_count: 2
+  - symbol: /
+    precedence: 2
+    assoc: L
+    operation: true_divide
+    operand_count: 2
+  - symbol: +
+    precedence: 1
+    assoc: L
+    operation: add
+    operand_count: 2
+  - symbol: "-"
+    precedence: 1
+    assoc: L
+    operation: subtract
+    operand_count: 2

@@ -10,6 +10,7 @@ numpy = "*"
 matplotlib = "*"
 plotly = "*"
 flask = "*"
+pyyaml = "*"
 
 [requires]
 python_version = "3.6"
