@@ -2,9 +2,9 @@
 Module for Flask API.
 """
 
-from compute import Calculator
-
 from flask import Flask, request, send_file
+
+from . compute import Calculator
 
 app = Flask(__name__)
 calculator = Calculator('config.yaml')

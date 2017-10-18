@@ -10,7 +10,7 @@ from mpl_toolkits.axes_grid.axislines import SubplotZero
 import matplotlib.pyplot as plt
 import numpy as np
 
-from configuration import Configuration
+from . configuration import Configuration
 
 
 class Calculator:
