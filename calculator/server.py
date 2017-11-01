@@ -1,22 +1,23 @@
 """
-Module for Flask API.
+Module for Sanic API.
 """
 
-from flask import Flask, request, send_file
+from sanic import Sanic, response
 
 from . compute import Calculator
 
-app = Flask(__name__)
+app = Sanic()
 calculator = Calculator('config.yaml')
 
 
 @app.route('/graph')
-def graph():
+async def graph(request):
     """
-    Returns the graph of the given expression
+    Returns the graph of the given expression.
     """
 
-    expression = request.args['exp']
+    expression = request.args['exp'][0]
+    print(expression)
     calculator.graph(expression, 'temp.png')
 
-    return send_file('temp.png', mimetype='image/png')
+    return await response.file('temp.png')

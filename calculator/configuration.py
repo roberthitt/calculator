@@ -28,7 +28,6 @@ class Configuration():
 
             self.ops = {op['symbol']: self.create_op_info(op)
                         for op in data['operators']}
-            print(self.ops)
 
     def create_op_info(self, op_dict):
         """
@@ -45,6 +44,3 @@ class Configuration():
                            assoc=op_dict['assoc'],
                            operation=getattr(np, op_dict['operation']),
                            operand_count=op_dict['operand_count'])
-
-
-c = Configuration('config.yaml')
