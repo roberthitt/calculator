@@ -86,6 +86,10 @@ class Calculator:
         else:
             plt.show()
 
+        g = Graph('cs-321-project','BTAPeQhBPbR6SkKQDkkU')
+	g.create_graph('graph_name','graph_title', data)
+
+
     def solve(self, expression, replacement=None):
         """
         Solves an infix algebraic expression.
