@@ -12,7 +12,6 @@ plotly = "*"
 flask = "*"
 pyyaml = "*"
 sanic = "*"
-python3-tk = "*"
 
 [requires]
 python_version = "3.5"
