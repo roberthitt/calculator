@@ -7,7 +7,6 @@ from io import BytesIO
 from tokenize import tokenize, NUMBER, ENCODING
 
 from mpl_toolkits.axes_grid.axislines import SubplotZero
-import matplotlib.pyplot as plt
 import numpy as np
 
 from . configuration import Configuration
@@ -66,6 +65,10 @@ class Calculator:
             y_bounds: integer determining scale of y axis
             file_name: name for plot to be serialized under.
         """
+
+        import matplotlib
+        matplotlib.use('agg')
+        import matplotlib.pyplot as plt
 
         fig = plt.figure(1)
         subplot = SubplotZero(fig, 111)
