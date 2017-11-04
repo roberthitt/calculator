@@ -2,8 +2,6 @@
 Module for Sanic API.
 """
 
-import os
-
 from sanic import Sanic, response
 
 from . compute import Calculator
@@ -23,9 +21,3 @@ async def graph(request):
     calculator.graph(expression, 'temp.png')
 
     return await response.file('temp.png')
-
-app.run(
-    host='0.0.0.0',
-    port=os.environ.get('PORT') or 8080,
-    debug=True
-)
