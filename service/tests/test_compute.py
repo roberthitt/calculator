@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture(scope="module")
 def calc():
-    from .. calculator.compute import Calculator
+    from .. compute import Calculator
     return Calculator('config.yaml')
 
 

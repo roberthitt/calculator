@@ -9,7 +9,7 @@ from tokenize import tokenize, NUMBER, ENCODING
 from mpl_toolkits.axes_grid.axislines import SubplotZero
 import numpy as np
 
-from . configuration import Configuration
+from configuration import Configuration
 
 
 class Calculator:
