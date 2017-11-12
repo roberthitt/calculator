@@ -9,7 +9,7 @@ from sanic import Sanic, response
 from compute import Calculator
 
 app = Sanic()
-calculator = Calculator('config/config.yaml')
+calculator = Calculator('config.yaml')
 
 
 @app.route('/graph')
