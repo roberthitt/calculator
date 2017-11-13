@@ -22,11 +22,19 @@ pip install docker-compose
 
 While in the same directory as `docker-compose.yml`, run
 
+Upon first installation, or if any dependencies are updated, run
+
+```
+docker-compose build
+```
+
+To run the containers, run the command
+
 ```
 docker-compose up
 ```
 
-or, if that doesn't work
+or, if that doesn't work, run
 
 ```
 sudo docker-compose up
