@@ -19,15 +19,15 @@ async def graph(request):
     """
 
     expression = request.args['exp'][0]
-    print(expression)
     calculator.graph(expression, 'temp.png')
 
     return await response.file('temp.png')
 
 if __name__ == '__main__':
+    port = os.environ.get('PORT') or 8080
     app.run(
         host='0.0.0.0',
-        port=int(os.environ.get('PORT')) or 8080,
+        port=int(port),
         workers=4,
         debug=True
     )
