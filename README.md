@@ -20,22 +20,21 @@ pip install docker-compose
 
 ## Installing
 
-While in the same directory as `docker-compose.yml`, run
+While in the same directory as `docker-compose.yml`, run the following:
 
-Upon first installation, or if any dependencies are updated, run
+1) Upon first installation, or if any dependencies are updated:
 
 ```
 docker-compose build
 ```
 
-To run the containers, run the command
+2) To start the services up:
 
 ```
 docker-compose up
 ```
 
-or, if that doesn't work, run
-
+3) If the above didn't work, try:
 ```
 sudo docker-compose up
 ```
