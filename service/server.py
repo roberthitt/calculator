@@ -7,6 +7,7 @@ import os
 from sanic import Sanic, response
 
 from compute import Calculator
+from extract import Extractor
 
 app = Sanic()
 calculator = Calculator('config.yaml')
@@ -22,6 +23,29 @@ async def graph(request):
     calculator.graph(expression, 'temp.png')
 
     return await response.file('temp.png')
+
+
+@app.route('/solve')
+async def solve(request):
+    """
+    Returns the solution to the given expression.
+    """
+
+    expression = request.args['exp'][0]
+    solution = calculator.solve(expression)
+
+    return response.text(str(solution))
+
+
+@app.route('/extract', methods=['POST'])
+async def extract(request):
+    """
+    Returns the text contained in the image.
+    """
+
+    body = request.files['file'][0].body
+    text = Extractor.extract(body)
+    return response.text(text)
 
 if __name__ == '__main__':
     port = os.environ.get('PORT') or 8080
