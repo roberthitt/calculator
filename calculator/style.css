@@ -1,0 +1,65 @@
+
+#prompt {
+	font-size:15pt;
+	line-height: 2;
+}
+
+#textfield {
+	font-size:20pt;
+	width: 350px;
+	font-family: 'Times New Roman', Times, serif;
+	font-style: italic;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 10px;
+	padding-left: 10px;
+	vertical-align: bottom;
+	margin: 0px 5px 5px 0px; 
+}
+
+#button {
+    background-color: rgb(218,165,32);
+    border: none;
+	color: white;
+	padding-top: 18px;
+	padding-bottom: 13px;
+	padding-right: 20px;
+	padding-left: 20px;
+    text-align: center;
+    display: inline-block;
+	font-size: 20px;
+	vertical-align: top;
+	transition-duration: 0.4s;
+	border: 1px solid rgb(218,165,32)
+}
+
+input[type=button] {
+    	   width: 8%;
+           height: 50px;
+           padding: 12px 15px;
+           margin: 8px 0;
+           box-sizing: border-box;
+}
+
+input[type=reset] {
+    	   width: 8%;
+    	   height: 50px;
+    	   padding: 12px 15px;
+    	   margin: 8px 0;
+    	   box-sizing: border-box;
+	}
+#button:hover {
+	background-color: white;
+	color:  rgb(0, 122, 204);
+}
+
+#equation {
+	font-size:20pt;
+	font-family: 'Times New Roman', Times, serif;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 10px;
+	padding-left: 10px;
+	vertical-align: bottom;
+	margin: 0px 5px 5px 0px; 
+}
