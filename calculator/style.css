@@ -48,6 +48,13 @@ input[type=reset] {
     	   margin: 8px 0;
     	   box-sizing: border-box;
 	}
+input[type=textfield] {
+    	   width: 20%;
+    	   height: 50px;
+    	   padding: 12px 15px;
+    	   margin: 8px 0;
+    	   box-sizing: border-box;
+}
 #button:hover {
 	background-color: white;
 	color:  rgb(0, 122, 204);

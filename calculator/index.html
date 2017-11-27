@@ -16,13 +16,19 @@
         
         <input type="text" id="textfield" />
         <button id="button">Graph!</button><br>
+	<button id="reset">Reset</button>
         <h4 id="equation"></h4>
         <img id="graph">
 
         <script>
-            var baseURL = "https://powerful-ravine-74045.herokuapp.com/graph?exp=";
-
+	    var baseURL = "http://54.189.255.114:8080/graph?exp="
+            
             button.addEventListener("click", graph);
+	    reset.addEventListener("click", resetGraph);
+
+	    function resetGraph() {
+		location.reload();
+	    }
 
             function graph() {
                 var textBoxEquation = document.getElementById('textfield');
@@ -31,7 +37,9 @@
                 
                 if (document.getElementById('textfield').value != '') {
                         equation.innerText = 'y = ' + textBoxEquation.value;
-                        graphImage.src = baseURL + textBoxEquation.value;
+			var arguments = textBoxEquation.value;
+			arguments = arguments.replace("+", "%2B");
+                        graphImage.src = baseURL + arguments;
                 }
             }
         </script>
@@ -52,16 +60,17 @@
 	<input type="button" value="8" onClick="document.calculator.ans.value+='8'">
 	<input type="button" value="9" onClick="document.calculator.ans.value+='9'">
 	<input type="button" value="*" onClick="document.calculator.ans.value+='*'">
-	<input type="button" value="/" onClick="document.calculator.ans.value+='/'">
         <br>
 	<input type="button" value="0" onClick="document.calculator.ans.value+='0'">
-	<input type="reset" value="Reset">
-
-	<input type="button" value="=" onClick="document.calculator.ans.value=eval	(document.calculator.ans.value)">
+	<input type="reset" value="Clear">
+	<input type="button" value="=" onClick="document.calculator.ans.value=eval(document.calculator.ans.value)">
+	<input type="button" value="/" onClick="document.calculator.ans.value+='/'">
 	<br>
 	<br>
 	<br>
-	Solution: <br><input type="textfield" name="ans" value="">
+	<label id="prompt">Solution: </label>
+	<br>
+	<input id="text" type="textfield" name="ans" value="">
     </form>
     </body>
 </html>
