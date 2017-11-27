@@ -52,8 +52,11 @@ Pillow==4.3.0
 ## Contributors
 
 Robert Hitt
+
 Tazeen Refai
+
 Behrad Behmardi
+
 Nick Marino
 
 
