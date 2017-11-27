@@ -39,6 +39,7 @@ sudo docker-compose up
 ```
 
 ## Requirements
+```
 matplotlib==2.0.2
 numpy==1.13.1
 plotly==2.2.1
@@ -46,8 +47,10 @@ PyYAML==3.12
 sanic==0.6.0
 pytesseract==0.1.7
 Pillow==4.3.0
+```
 
 ## Contributors
+
 Robert Hitt
 Tazeen Refai
 Behrad Behmardi
