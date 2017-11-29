@@ -5,8 +5,7 @@ Module for computing infix expressions and equations
 from collections import namedtuple, deque
 from io import BytesIO
 from tokenize import tokenize, NUMBER, ENCODING
-from plotly_lib import Graph as gr
-import plotly.plotly as py
+from plotly_lib import Graph
 from mpl_toolkits.axes_grid.axislines import SubplotZero
 import numpy as np
 
@@ -30,7 +29,7 @@ class Calculator:
         config = Configuration(config_path)
         self.ops = config.ops
 
-    def graph(self, equation, file_name=None, dimensions=(10, 10), plotly=False):
+    def graph(self, equation, file_name=None, dimensions=(10, 10)):
         """
         Graphs a function of the form 'x + 5'.
 
@@ -51,10 +50,9 @@ class Calculator:
         points[points > y_bounds] = np.nan
         points[points < -y_bounds] = np.nan
 
-        print(f"Plotly: {plotly}")
-        self.create_plot(increments, points, y_bounds, file_name=file_name, plotly=plotly)
+        self.create_plot(increments, points, y_bounds, file_name)
 
-    def create_plot(self, scale, points, y_bounds, file_name=None, plotly=False):
+    def create_plot(self, scale, points, y_bounds, file_name=None):
         """
         Using matplotlib, graphs the given points on a Cartesian plane.
 
@@ -67,10 +65,20 @@ class Calculator:
             y_bounds: integer determining scale of y axis
             file_name: name for plot to be serialized under.
         """
+        from plotly_lib import Graph
+        import time
+        import datetime, calendar
+        import plotly.plotly as py
         import matplotlib
         matplotlib.use('agg')
+        from datetime import date, timedelta
         import matplotlib.pyplot as plt
-
+        username = 'cs-321-project'
+        api_key = 'Gz4cBfP7yMcMtNudNV84'
+        py.sign_in(username, api_key)
+        t2 = {'tr0': [scale,points]}
+        g = Graph('cs-321-project','Gz4cBfP7yMcMtNudNV84')
+        url = g.create_graph('cs-321-project','Graph',t2)
         fig = plt.figure(1)
         subplot = SubplotZero(fig, 111)
         fig.add_subplot(subplot)
@@ -89,16 +97,6 @@ class Calculator:
             plt.savefig(file_name)
         else:
             plt.show()
-
-        if plotly:
-            username = 'cs-321-project'
-            api_key = 'Gz4cBfP7yMcMtNudNV84'
-            py.sign_in(username, api_key)
-            t2 = {'tr0': [scale, points]}
-            g = gr('cs-321-project', 'Gz4cBfP7yMcMtNudNV84')
-            url = g.create_graph('cs-321-project', 'Graph', t2)
-            print(f"URL: {url}")
-            return url
 
     def solve(self, expression, replacement=None):
         """
