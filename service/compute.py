@@ -5,7 +5,8 @@ Module for computing infix expressions and equations
 from collections import namedtuple, deque
 from io import BytesIO
 from tokenize import tokenize, NUMBER, ENCODING
-from plotly_lib import Graph
+from plotly_lib import Graph as gr
+import plotly.plotly as py
 from mpl_toolkits.axes_grid.axislines import SubplotZero
 import numpy as np
 
@@ -52,7 +53,7 @@ class Calculator:
 
         self.create_plot(increments, points, y_bounds, file_name)
 
-    def create_plot(self, scale, points, y_bounds, file_name=None):
+    def create_plot(self, scale, points, y_bounds, file_name=None, plotly=False):
         """
         Using matplotlib, graphs the given points on a Cartesian plane.
 
@@ -65,20 +66,10 @@ class Calculator:
             y_bounds: integer determining scale of y axis
             file_name: name for plot to be serialized under.
         """
-        from plotly_lib import Graph
-        import time
-        import datetime, calendar
-        import plotly.plotly as py
         import matplotlib
         matplotlib.use('agg')
-        from datetime import date, timedelta
         import matplotlib.pyplot as plt
-        username = 'cs-321-project'
-        api_key = 'Gz4cBfP7yMcMtNudNV84'
-        py.sign_in(username, api_key)
-        t2 = {'tr0': [scale,points]}
-        g = Graph('cs-321-project','Gz4cBfP7yMcMtNudNV84')
-        url = g.create_graph('cs-321-project','Graph',t2)
+
         fig = plt.figure(1)
         subplot = SubplotZero(fig, 111)
         fig.add_subplot(subplot)
@@ -98,6 +89,14 @@ class Calculator:
         else:
             plt.show()
 
+        if plotly:
+            username = 'cs-321-project'
+            api_key = 'Gz4cBfP7yMcMtNudNV84'
+            py.sign_in(username, api_key)
+            t2 = {'tr0': [scale, points]}
+            g = gr('cs-321-project', 'Gz4cBfP7yMcMtNudNV84')
+            url = g.create_graph('cs-321-project', 'Graph', t2)
+            return url
 
     def solve(self, expression, replacement=None):
         """

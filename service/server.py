@@ -22,8 +22,11 @@ async def graph(request):
     """
 
     expression = request.args['exp'][0]
-    calculator.graph(expression, 'temp.png')
+    plotly = request.args['plotly']
+    url = calculator.graph(expression, 'temp.png', plotly)
 
+    if plotly:
+        return url
     return await response.file('temp.png')
 
 
