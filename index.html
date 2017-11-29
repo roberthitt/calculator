@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Graphing Calculator</title>
+		<meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body bgcolor= "#ffffff" text= "#dee9ef">
+	<div>
+		<div id="container" style="width:100%;">
+			<div id="left" style="float:left; width:50%;" >
+					<h1>Graphing Calculator</h1>
+					<label id="prompt">Put in the equation you want to graph: </label><br>
+					
+					<input type="text" id="textfield" />
+					<button id="button">Graph!</button><br>
+					<button id="submit">Submit image!</button>
+					<button id="reset">Reset</button>
+					<h4 id="equation"></h4>
+					<iframe id="graph" width="700" height="700" frameborder="0" scrolling="no"></iframe>
+			
+					<script>
+						var URL = "http://54.189.255.114:8080/graph?exp="
+						
+						button.addEventListener("click", graph);
+						reset.addEventListener("click", resetGraph);
+						
+						function resetGraph() {
+							location.reload();
+						}
+			
+						function graph() {
+							var textBoxEquation = document.getElementById('textfield');
+							var graphImage = document.getElementById('graph');
+							var equation = document.getElementById('equation');
+							
+							if (document.getElementById('textfield').value != '') {
+									equation.innerText = 'y = ' + textBoxEquation.value;
+									var arguments = textBoxEquation.value;
+									arguments = arguments.replace("+", "%2B");
+									graphImage.src = URL + arguments;
+							}
+						}
+						/*
+						var baseURL = "http://54.189.255.114:8080/graph?exp=";
+						var textBoxEquation = document.getElementById('textfield');
+						var graphImage = document.getElementById('graph');
+
+						var equation = document.getElementById('equation');
+					
+						solve.addEventListener("click", graph);
+					
+						function graph() {
+							var xhr = new XMLHttpRequest();
+							var expression = textBoxEquation.value;
+					
+							expression = expression.replace("+", "%2B");
+					
+							xhr.open('GET', baseURL + expression + "&plotly=true", true);	
+							xhr.send();
+					
+							xhr.onreadystatechange = function() {
+								if (xhr.readyState == 4 && xhr.status == 200) {
+									alert(xhr.responseText);
+								}
+							}
+						}
+
+*/
+
+					</script>
+			</div>
+			<div id="right" style="float:right; width:50%;">
+					<h1></h1>
+					<br>
+					<br>
+					<br>
+					<form name="calculator">
+							
+							<label id="prompt">Basic calculations can be done here:</label><br>
+					
+							<input type="button" value="1" onClick="document.calculator.ans.value+='1'">
+							<input type="button" value="2" onClick="document.calculator.ans.value+='2'">
+							<input type="button" value="3" onClick="document.calculator.ans.value+='3'">
+							<input type="button" value="+" onClick="document.calculator.ans.value+='+'">
+							<br>
+							<input type="button" value="4" onClick="document.calculator.ans.value+='4'">
+							<input type="button" value="5" onClick="document.calculator.ans.value+='5'">
+							<input type="button" value="6" onClick="document.calculator.ans.value+='6'">
+							<input type="button" value="-" onClick="document.calculator.ans.value+='-'">
+							<br>
+							<input type="button" value="7" onClick="document.calculator.ans.value+='7'">
+							<input type="button" value="8" onClick="document.calculator.ans.value+='8'">
+							<input type="button" value="9" onClick="document.calculator.ans.value+='9'">
+							<input type="button" value="*" onClick="document.calculator.ans.value+='*'">
+							<br>
+							<input type="button" value="0" onClick="document.calculator.ans.value+='0'">
+							<input type="reset" value="Clear">
+							<input type="button" value="=" id="solve">
+							<input type="button" value="/" onClick="document.calculator.ans.value+='/'">
+							<br>
+							<br>
+							<br>
+							<label id="prompt">Solution: </label>
+							<br>
+							<input id="text" type="textfield" name="ans" value="">
+						</form>
+						</div>
+							<script>
+								var baseURL = "http://54.189.255.114:8080/solve?exp=";
+								var solve = document.getElementById("solve");
+					
+								solve.addEventListener("click", getSolution);
+					
+								function getSolution() {
+									var xhr = new XMLHttpRequest();
+									var expression = document.getElementById("text").value;
+					
+									expression = expression.replace("+", "%2B");
+					
+									xhr.open('GET', baseURL + expression, true);	
+									xhr.send();
+					
+									xhr.onreadystatechange = function() {
+										if (xhr.readyState == 4 && xhr.status == 200) {
+											document.getElementById("text").value = xhr.responseText;
+										}
+									}
+								}
+							</script>
+			</div>
+		</div>
+        
+
+	
+
+    </body>
+</html>
