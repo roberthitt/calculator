@@ -22,12 +22,10 @@ async def graph(request):
     """
 
     expression = request.args['exp'][0]
-    plotly = request.args['plotly']
-    url = calculator.graph(expression, 'temp.png', plotly)
+    url = calculator.graph(expression, 'temp.png', plotly=True)
 
-    if plotly:
-        return url
-    return await response.file('temp.png')
+    return response.text(url)
+    # return await response.file('temp.png')
 
 
 @app.route('/solve')

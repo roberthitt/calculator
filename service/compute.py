@@ -30,7 +30,7 @@ class Calculator:
         config = Configuration(config_path)
         self.ops = config.ops
 
-    def graph(self, equation, file_name=None, dimensions=(10, 10)):
+    def graph(self, equation, file_name=None, dimensions=(10, 10), plotly=False):
         """
         Graphs a function of the form 'x + 5'.
 
@@ -51,7 +51,8 @@ class Calculator:
         points[points > y_bounds] = np.nan
         points[points < -y_bounds] = np.nan
 
-        self.create_plot(increments, points, y_bounds, file_name)
+        print(f"Plotly: {plotly}")
+        self.create_plot(increments, points, y_bounds, file_name=file_name, plotly=plotly)
 
     def create_plot(self, scale, points, y_bounds, file_name=None, plotly=False):
         """
@@ -96,6 +97,7 @@ class Calculator:
             t2 = {'tr0': [scale, points]}
             g = gr('cs-321-project', 'Gz4cBfP7yMcMtNudNV84')
             url = g.create_graph('cs-321-project', 'Graph', t2)
+            print(f"URL: {url}")
             return url
 
     def solve(self, expression, replacement=None):
