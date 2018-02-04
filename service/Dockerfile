@@ -5,4 +5,4 @@ RUN apt-get update \
     && apt-get -y install tesseract-ocr
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 EXPOSE 8080
-CMD ["python", "server.py"]
+CMD hupper -m server

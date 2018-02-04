@@ -5,3 +5,4 @@ PyYAML==3.12
 sanic==0.6.0
 pytesseract==0.1.7
 Pillow==4.3.0
+hupper==1.0

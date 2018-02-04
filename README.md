@@ -1,5 +1,4 @@
 # Calculator
-Class project for CS321: Software Requirements/Design Modeling
 
 ## Prerequisites
 
@@ -48,16 +47,6 @@ sanic==0.6.0
 pytesseract==0.1.7
 Pillow==4.3.0
 ```
-
-## Contributors
-
-Robert Hitt
-
-Tazeen Refai
-
-Behrad Behmardi
-
-Nick Marino
 
 
 
