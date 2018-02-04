@@ -5,9 +5,9 @@ Module for computing infix expressions and equations
 from collections import namedtuple, deque
 from io import BytesIO
 from tokenize import tokenize, NUMBER, ENCODING
-from plotly_lib import Graph
-from mpl_toolkits.axes_grid.axislines import SubplotZero
+
 import numpy as np
+from mpl_toolkits.axes_grid.axislines import SubplotZero
 
 from configuration import Configuration
 
@@ -65,24 +65,10 @@ class Calculator:
             y_bounds: integer determining scale of y axis
             file_name: name for plot to be serialized under.
         """
-        from plotly_lib import Graph
-        import time
-        import datetime, calendar
-        import plotly.plotly as py
         import matplotlib
-        matplotlib.use('agg')
-        from datetime import date, timedelta
+        matplotlib.use('Agg')
         import matplotlib.pyplot as plt
-        username = 'cs-321-project'
-        api_key = 'Gz4cBfP7yMcMtNudNV84'
-        py.sign_in(username, api_key)
-        t2 = {'tr0': [scale,points]}
-        g = Graph('cs-321-project','Gz4cBfP7yMcMtNudNV84')
-        url = g.create_graph('cs-321-project','Graph',t2)
-        file = open('url_out.txt','wb')
-        file.write(url)
-        file.close()
-        print(url.encode('utf-8'))
+
         fig = plt.figure(1)
         subplot = SubplotZero(fig, 111)
         fig.add_subplot(subplot)
@@ -101,7 +87,6 @@ class Calculator:
             plt.savefig(file_name)
         else:
             plt.show()
-        return url.encode('utf-8')
 
     def solve(self, expression, replacement=None):
         """

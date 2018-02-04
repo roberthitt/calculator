@@ -5,13 +5,11 @@ Module for Sanic API.
 import os
 
 from sanic import Sanic, response
-from sanic_cors import CORS
 
 from compute import Calculator
 from extract import Extractor
 
 app = Sanic()
-CORS(app)
 calculator = Calculator('config.yaml')
 
 
