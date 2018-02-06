@@ -45,10 +45,14 @@ class Calculator:
         increments = np.linspace(-x_bounds, x_bounds, 10000)
         points = self.solve(equation, replacement=increments)
 
-        # Filters out too large/small values.
-        # Necessary for functions with discontinuous lines (e.g., tan).
-        points[points > y_bounds] = np.nan
-        points[points < -y_bounds] = np.nan
+        try:
+            # Filters out too large/small values.
+            # Necessary for functions with discontinuous lines (e.g., tan).
+            points[points > y_bounds] = np.nan
+            points[points < -y_bounds] = np.nan
+        except TypeError:
+            # This should only occur in the case of invalid equation input.
+            return None
 
         self.create_plot(increments, points, y_bounds, file_name)
 
@@ -65,6 +69,7 @@ class Calculator:
             y_bounds: integer determining scale of y axis
             file_name: name for plot to be serialized under.
         """
+
         import matplotlib
         matplotlib.use('Agg')
         import matplotlib.pyplot as plt
@@ -128,6 +133,8 @@ class Calculator:
 
             return eval_stack.pop()
         except ValueError:
+            return None
+        except IndexError:
             return None
 
     def convert_infix(self, expression):

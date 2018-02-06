@@ -1,6 +1,8 @@
 import React from 'react'
 import { Input, Container, Header, Image } from 'semantic-ui-react'
 
+const SERVICE_URL = 'http://localhost:8080'
+
 class EquationInput extends React.Component {
     render() {
         const value = this.props.value;
@@ -28,7 +30,7 @@ class App extends React.Component {
     }
 
     render() {
-        const imageSource = 'http://localhost:8080/graph?exp=' + this.state.text;
+        const imageSource = SERVICE_URL + '/graph?exp=' + this.state.text;
         return (
             <Container style={{marginTop: '3em'}}>
                 <Header as='h1' dividing>Calculator</Header>

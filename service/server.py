@@ -3,6 +3,7 @@ Module for Sanic API.
 """
 
 import os
+from math import isinf
 
 from sanic import Sanic, response
 
@@ -11,6 +12,24 @@ from extract import Extractor
 
 app = Sanic()
 calculator = Calculator('config.yaml')
+
+
+@app.route('/valid')
+async def check_valid(request):
+    """
+    Checks whether the given equation is valid.
+    """
+
+    expression = request.args['exp'][0]
+    solution = calculator.solve(expression.replace('x', '(1)'))
+    status = 'valid'
+
+    if solution is None:
+        status = 'unbalanced'
+    elif isinf(solution):
+        status = 'divByZero'
+
+    return response.text(status)
 
 
 @app.route('/graph')
