@@ -1,7 +1,8 @@
-import React from 'react'
-import { Input, Container, Header, Image } from 'semantic-ui-react'
+import React from 'react';
+import axios from 'axios';
+import { Input, Container, Header, Image } from 'semantic-ui-react';
 
-const SERVICE_URL = 'http://localhost:8080'
+const SERVICE_URL = 'http://localhost:8080';
 
 class EquationInput extends React.Component {
     render() {

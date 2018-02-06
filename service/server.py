@@ -20,7 +20,8 @@ async def check_valid(request):
     Checks whether the given equation is valid.
     """
 
-    expression = request.args['exp'][0]
+    exp_param = request.args.get('exp', None)
+    expression = exp_param[0] if exp_param else ''
     solution = calculator.solve(expression.replace('x', '(1)'))
     status = 'valid'
 
@@ -37,8 +38,8 @@ async def graph(request):
     """
     Returns the graph of the given expression.
     """
-
-    expression = request.args['exp'][0]
+    exp_param = request.args.get('exp', None)
+    expression = exp_param[0] if exp_param else ''
     calculator.graph(expression, 'temp.png')
 
     return await response.file('temp.png')

@@ -4,7 +4,7 @@ Module for computing infix expressions and equations
 
 from collections import namedtuple, deque
 from io import BytesIO
-from tokenize import tokenize, NUMBER, ENCODING
+from tokenize import tokenize, NUMBER, ENCODING, TokenError
 
 import numpy as np
 from mpl_toolkits.axes_grid.axislines import SubplotZero
@@ -41,8 +41,11 @@ class Calculator:
         """
 
         x_bounds, y_bounds = dimensions
-
         increments = np.linspace(-x_bounds, x_bounds, 10000)
+
+        if equation == '':
+            self.create_plot(increments, y_bounds, file_name=file_name)
+
         points = self.solve(equation, replacement=increments)
 
         try:
@@ -54,9 +57,10 @@ class Calculator:
             # This should only occur in the case of invalid equation input.
             return None
 
-        self.create_plot(increments, points, y_bounds, file_name)
+        self.create_plot(increments, y_bounds,
+                         points=points, file_name=file_name)
 
-    def create_plot(self, scale, points, y_bounds, file_name=None):
+    def create_plot(self, scale, y_bounds, points=None, file_name=None):
         """
         Using matplotlib, graphs the given points on a Cartesian plane.
 
@@ -86,7 +90,9 @@ class Calculator:
             subplot.axis[direction].set_visible(False)
 
         subplot.set_ylim([-y_bounds, y_bounds])
-        subplot.plot(scale, points)
+
+        if points is not None:
+            subplot.plot(scale, points)
 
         if file_name:
             plt.savefig(file_name)
@@ -112,10 +118,10 @@ class Calculator:
             # Necessary for supporting expressions like 5x.
             expression = expression.replace('x', '(x)')
 
-        postfix_queue = self.convert_infix(expression)
-        eval_stack = []
-
         try:
+            postfix_queue = self.convert_infix(expression)
+            eval_stack = []
+
             for token in postfix_queue:
                 if token == 'x':
                     eval_stack.append(replacement)
@@ -135,6 +141,8 @@ class Calculator:
         except ValueError:
             return None
         except IndexError:
+            return None
+        except TokenError:
             return None
 
     def convert_infix(self, expression):
