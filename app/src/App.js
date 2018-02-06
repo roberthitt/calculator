@@ -21,6 +21,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             text: 'x',
+            value: 'x',
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -29,8 +30,11 @@ class App extends React.Component {
     handleChange(value) {
         const validPath = encodeURI(SERVICE_URL + '/valid?exp=' + value);
         axios.get(validPath).then(response => {
-            console.log(response);
-            this.setState({text: value});
+            if(response.data.localeCompare('valid') == 0) {
+                this.setState({text: value, value: value});
+            } else {
+                this.setState({text: value});
+            }
         });
     }
 

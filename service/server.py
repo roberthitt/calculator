@@ -41,8 +41,7 @@ async def graph(request):
     """
     Returns the graph of the given expression.
     """
-    exp_param = request.args.get('exp', None)
-    expression = exp_param[0] if exp_param else ''
+    expression = request.args.get('exp', '')
     calculator.graph(expression, 'temp.png')
 
     return await response.file('temp.png')
