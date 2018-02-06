@@ -6,11 +6,13 @@ import os
 from math import isinf
 
 from sanic import Sanic, response
+from sanic_cors import CORS, cross_origin
 
 from compute import Calculator
 from extract import Extractor
 
 app = Sanic()
+CORS(app)
 calculator = Calculator('config.yaml')
 
 
@@ -20,9 +22,10 @@ async def check_valid(request):
     Checks whether the given equation is valid.
     """
 
-    exp_param = request.args.get('exp', None)
-    expression = exp_param[0] if exp_param else ''
-    solution = calculator.solve(expression.replace('x', '(1)'))
+    expression = request.args.get('exp', '')
+    replaced = expression.replace('x', '(1)')
+
+    solution = calculator.solve(replaced)
     status = 'valid'
 
     if solution is None:

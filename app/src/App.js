@@ -27,11 +27,15 @@ class App extends React.Component {
     }
 
     handleChange(value) {
-        this.setState({text: value});
+        const validPath = encodeURI(SERVICE_URL + '/valid?exp=' + value);
+        axios.get(validPath).then(response => {
+            console.log(response);
+            this.setState({text: value});
+        });
     }
 
     render() {
-        const imageSource = SERVICE_URL + '/graph?exp=' + this.state.text;
+        const imageSource = encodeURI(SERVICE_URL + '/graph?exp=' + this.state.text);
         return (
             <Container style={{marginTop: '3em'}}>
                 <Header as='h1' dividing>Calculator</Header>
