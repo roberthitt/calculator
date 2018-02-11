@@ -30,7 +30,7 @@ class App extends React.Component {
     handleChange(value) {
         const validPath = encodeURI(SERVICE_URL + '/valid?exp=' + value);
         axios.get(validPath).then(response => {
-            if(response.data.localeCompare('valid') == 0) {
+            if(response.data.localeCompare('valid') === 0) {
                 this.setState({text: value, value: value});
             } else {
                 this.setState({text: value});
