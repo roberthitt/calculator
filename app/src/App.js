@@ -1,16 +1,53 @@
 import React from 'react';
 import axios from 'axios';
-import { Input, Container, Header, Image, Grid, Button } from 'semantic-ui-react';
+import Dropzone from 'react-dropzone';
+import { Input, Container, Header, Image, Grid, Button, Modal } from 'semantic-ui-react';
 
 const SERVICE_URL = 'http://localhost:8080';
 
-class UploadButton extends React.Component {
+class UploadModal extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {files: [], isDropzoneHidden: false};
+    }
+
+    onDrop(files) {
+        this.setState({files: files, isDropzoneHidden: true});
+    }
+
     render() {
+        let imageSource;
+        let imageName;
+        if(this.state.files.length !== 0){
+            imageSource = this.state.files[0].preview;
+            imageName = this.state.files[0].name;
+        }
+
         return (
-            <Button icon='upload'
-                    onClick={this.props.onClick}
-            />
-        );
+            <Modal size='tiny' trigger={<Button icon='upload'/>}>
+                <Modal.Header>Select an image to extract text from.</Modal.Header>
+                <Modal.Content>
+                    <section>
+                        <div className='dropzone'>
+                            <div style={{display: 'flex', justifyContent: 'center'}}>
+                                <Dropzone onDrop={this.onDrop.bind(this)}
+                                        hidden={this.state.isDropzoneHidden}>
+                                    <p>Drop an image here, or click to select an image.</p>
+                                </Dropzone>
+                            </div>
+                            <Image hidden={!this.state.isDropzoneHidden} src={imageSource}/>
+                        </div>
+                        <aside>
+                            <p hidden={!this.state.isDropzoneHidden}>{imageName}</p>
+                        </aside>
+                    </section>
+                    <div hidden={!this.state.isDropzoneHidden}>
+                        <Button positive>Upload</Button>
+                        <Button onClick={() => this.setState({isDropzoneHidden: !this.state.isDropzoneHidden})}>Cancel</Button>
+                    </div>
+                </Modal.Content>
+            </Modal>
+        )
     }
 }
 
@@ -21,7 +58,8 @@ class EquationInput extends React.Component {
             <Input placeholder='(enter an equation)'
                    label='f(x) = ' size='big'
                    value={value}
-                   action={<UploadButton onClick={this.props.onButtonClick}/>}
+                   //action={<UploadButton onClick={this.props.onButtonClick}/>}
+                   action={<UploadModal onClick={this.props.onButtonClick}/>}
                    onChange={(event, data) => this.props.onChange(data.value)}
                    onKeyPress={(e) => this.props.onKeyPress(e.key, value)}/>
         );
@@ -41,8 +79,8 @@ class App extends React.Component {
         this.handleUpload = this.handleUpload.bind(this);
     }
 
-    handleUpload(value) {
-        console.log("UPLOADY");
+    handleUpload() {
+        console.log("UPLOAD");
     }
 
     handleChange(value) {
@@ -52,8 +90,8 @@ class App extends React.Component {
     handleKeyPress(key, value) {
         if(key === 'Enter') {
             const argument = encodeURIComponent(value);
-            const validPath = SERVICE_URL + '/valid?exp=' + argument;
-            axios.get(validPath).then(response => {
+            const validUrl = SERVICE_URL + '/valid?exp=' + argument;
+            axios.get(validUrl).then(response => {
                 if(response.data.localeCompare('valid') === 0) {
                     this.setState({text: value, value: value});
                 }
