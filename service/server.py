@@ -80,6 +80,28 @@ async def extract(request):
     text = Extractor.extract(body)
     return response.text(text)
 
+
+@app.route('/history', methods=['GET'])
+async def history(request):
+    """
+    Returns a log of all previous graphs.
+    """
+
+    log = storage_engine.get_image_history()
+
+    return response.json(log)
+
+
+@app.route('/image', methods=['GET'])
+async def image(request):
+    """
+    Returns the graph stored at the given path.
+    """
+    path = request.args['path'][0]
+
+    return await response.file(path)
+
+
 if __name__ == '__main__':
     port = os.environ.get('PORT') or 8080
     app.run(
@@ -88,3 +110,4 @@ if __name__ == '__main__':
         workers=4,
         debug=True
     )
+

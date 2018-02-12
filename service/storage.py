@@ -1,5 +1,4 @@
-import os
-import sys
+import json
 
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy import create_engine
@@ -42,11 +41,29 @@ class StorageEngine:
             equation: a string containing the right side of an equation
         """
 
-        Base.metadata.bind = self.engine
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
 
         new_image = Image(timestamp=timestamp, path=path, equation=equation)
         session.add(new_image)
         session.commit()
+
+    def get_image_history(self):
+        """
+        Gets all rows from Image table
+        """
+
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+
+        log = []
+        for row in session.query(Image).order_by(Image.timestamp).all():
+            log.append({
+                'timestamp': row.timestamp,
+                'path': row.path,
+                'equation': row.equation
+            })
+
+        return log
+
 
