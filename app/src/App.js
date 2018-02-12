@@ -33,8 +33,17 @@ class App extends React.Component {
     }
 
     handleUpload(file) {
-        console.log("UPLOAD");
-        console.log(file);
+        const extractUrl = SERVICE_URL + '/extract';
+        const formData = new FormData();
+        formData.append('file', file);
+        axios.post(extractUrl, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(response => {
+            const equation = response.data;
+            this.setState({text: equation});
+        });
     }
 
     handleChange(value) {
