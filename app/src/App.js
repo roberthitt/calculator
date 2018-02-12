@@ -1,55 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import Dropzone from 'react-dropzone';
-import { Input, Container, Header, Image, Grid, Button, Modal } from 'semantic-ui-react';
+import { Input, Container, Header, Image, Grid } from 'semantic-ui-react';
+import UploadModal from './UploadModal';
 
 const SERVICE_URL = 'http://localhost:8080';
-
-class UploadModal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {files: [], isDropzoneHidden: false};
-    }
-
-    onDrop(files) {
-        this.setState({files: files, isDropzoneHidden: true});
-    }
-
-    render() {
-        let imageSource;
-        let imageName;
-        if(this.state.files.length !== 0){
-            imageSource = this.state.files[0].preview;
-            imageName = this.state.files[0].name;
-        }
-
-        return (
-            <Modal size='tiny' trigger={<Button icon='upload'/>}>
-                <Modal.Header>Select an image to extract text from.</Modal.Header>
-                <Modal.Content>
-                    <section>
-                        <div className='dropzone'>
-                            <div style={{display: 'flex', justifyContent: 'center'}}>
-                                <Dropzone onDrop={this.onDrop.bind(this)}
-                                        hidden={this.state.isDropzoneHidden}>
-                                    <p>Drop an image here, or click to select an image.</p>
-                                </Dropzone>
-                            </div>
-                            <Image hidden={!this.state.isDropzoneHidden} src={imageSource}/>
-                        </div>
-                        <aside>
-                            <p hidden={!this.state.isDropzoneHidden}>{imageName}</p>
-                        </aside>
-                    </section>
-                    <div hidden={!this.state.isDropzoneHidden}>
-                        <Button positive>Upload</Button>
-                        <Button onClick={() => this.setState({isDropzoneHidden: !this.state.isDropzoneHidden})}>Cancel</Button>
-                    </div>
-                </Modal.Content>
-            </Modal>
-        )
-    }
-}
 
 class EquationInput extends React.Component {
     render() {
@@ -58,7 +12,6 @@ class EquationInput extends React.Component {
             <Input placeholder='(enter an equation)'
                    label='f(x) = ' size='big'
                    value={value}
-                   //action={<UploadButton onClick={this.props.onButtonClick}/>}
                    action={<UploadModal onClick={this.props.onButtonClick}/>}
                    onChange={(event, data) => this.props.onChange(data.value)}
                    onKeyPress={(e) => this.props.onKeyPress(e.key, value)}/>
@@ -79,8 +32,9 @@ class App extends React.Component {
         this.handleUpload = this.handleUpload.bind(this);
     }
 
-    handleUpload() {
+    handleUpload(file) {
         console.log("UPLOAD");
+        console.log(file);
     }
 
     handleChange(value) {
