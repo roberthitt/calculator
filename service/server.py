@@ -11,10 +11,12 @@ from sanic_cors import CORS
 
 from compute import Calculator
 from extract import Extractor
+from storage import StorageEngine
 
 app = Sanic()
 CORS(app)
 calculator = Calculator('config.yaml')
+storage_engine = StorageEngine()
 
 
 @app.route('/valid')
@@ -42,11 +44,16 @@ async def graph(request):
     """
     Returns the graph of the given expression.
     """
-    current_time = datetime.datetime.now().isoformat()
+    # Save image based on time of creation.
+    current_time = datetime.datetime.now()
     image_path = f'images/{current_time}.png'
 
+    # Graph given expression.
     expression = request.args.get('exp', '')
     calculator.graph(expression, image_path)
+
+    # Log graph info to database.
+    storage_engine.add_image(current_time, image_path, expression)
 
     return await response.file(image_path)
 

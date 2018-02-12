@@ -7,3 +7,4 @@ pytesseract==0.1.7
 Pillow==4.3.0
 hupper==1.0
 sanic-cors==0.9.3
+sqlalchemy==0.8.1
