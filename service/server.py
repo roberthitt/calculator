@@ -3,10 +3,11 @@ Module for Sanic API.
 """
 
 import os
+import datetime
 from math import isinf
 
 from sanic import Sanic, response
-from sanic_cors import CORS, cross_origin
+from sanic_cors import CORS
 
 from compute import Calculator
 from extract import Extractor
@@ -41,10 +42,13 @@ async def graph(request):
     """
     Returns the graph of the given expression.
     """
-    expression = request.args.get('exp', '')
-    calculator.graph(expression, 'temp.png')
+    current_time = datetime.datetime.now().isoformat()
+    image_path = f'images/{current_time}.png'
 
-    return await response.file('temp.png')
+    expression = request.args.get('exp', '')
+    calculator.graph(expression, image_path)
+
+    return await response.file(image_path)
 
 
 @app.route('/solve')
